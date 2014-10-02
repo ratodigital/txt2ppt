@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <!-- [START head_html] -->
+  <head>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  </head>
+  <!-- [END head_html] -->
+  <body>
+    <h1>Txt2Ppt</h1>
+    <h4>Each text line will generate one PPT slide.</h4>
+    <!--
+    {% for greeting in greetings %}
+      {% if greeting.author %}
+        <b>{{ greeting.author.nickname() }}</b> wrote:
+      {% else %}
+       An anonymous person wrote:
+      {% endif %}
+      <blockquote>{{ greeting.content }}</blockquote>
+    {% endfor %}
+    --> 
+    <form action="/ppt?username={{ username }}" method="post">
+      <div><textarea name="content" rows="30" cols="80"></textarea></div>
+      <div><input type="submit" value="Generate PPT"></div>
+    </form>
+<!--
+    <hr>
+
+    <form>Username:
+      <input value="{{ username }}" name="username">
+      <input type="submit" value="switch">
+    </form>
+
+    <a href="{{ url|safe }}">{{ url_linktext }}</a>
+-->
+    <p>Powered by <a href="http://ratodigital.com">Rato Digital</a>
+  </body>
+</html>
+{% endautoescape %}
