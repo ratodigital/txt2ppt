@@ -21,8 +21,8 @@
     --> 
     <form action="/ppt?username={{ username }}" method="post">
       <div><textarea name="content" rows="30" cols="80" required></textarea></div>
-      <div>Font size:<input type="text" name="fontsize" value="30" size="2"> Color:<input type="color" name="fontcolor"></div>
-      <div><input type="submit" value="Generate PPT"></div>
+      <div><p align="left">Font size:<input type="text" name="fontsize" value="30" size="2"> Font color:<input type="color" name="fontcolor"></p></div>
+      <div><input type="submit" style="font-size:20px" value="Generate PPT"></div>
     </form>
 <!--
     <hr>
@@ -34,7 +34,7 @@
 
     <a href="{{ url|safe }}">{{ url_linktext }}</a>
 -->
-    <p>Powered by <a href="http://ratodigital.com">Rato Digital</a>
-  </body>
+    <p style="font-size: 10px">Copyright <a href="http://marketing4nerds.com" target="_blank">Marketing4Nerds.com</a>
+ 2014</p>  </body>
 </html>
 {% endautoescape %}
