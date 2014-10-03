@@ -20,7 +20,8 @@
     {% endfor %}
     --> 
     <form action="/ppt?username={{ username }}" method="post">
-      <div><textarea name="content" rows="30" cols="80"></textarea></div>
+      <div><textarea name="content" rows="30" cols="80" required></textarea></div>
+      <div>Font size:<input type="text" name="fontsize" value="30" size="2"> Color:<input type="color" name="fontcolor"></div>
       <div><input type="submit" value="Generate PPT"></div>
     </form>
 <!--

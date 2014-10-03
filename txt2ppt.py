@@ -23,6 +23,8 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.enum.text import MSO_VERTICAL_ANCHOR
 from pptx.enum.text import PP_ALIGN
+from pptx.enum.dml import MSO_THEME_COLOR
+from pptx.dml.color import RGBColor
 
 import lxml
 
@@ -31,18 +33,22 @@ import StringIO
 #http://python-pptx.readthedocs.org/en/latest/user/text.html
 
 class Slides:
-        prs = Presentation()
-	file_name = "slides.pptx"
-	blank_slide_layout = prs.slide_layouts[6]
-	font_size = Pt(30)
+	prs = Presentation()
+    	file_name = "slides.pptx"
+    	blank_slide_layout = prs.slide_layouts[6]
+    	font_size = Pt(30)
+    	font_color = "ffffff"
 
 	def __init__(self, file_name):
-                self.prs = Presentation()
-                self.file_name = file_name	
+        	self.prs = Presentation()
+        	self.file_name = file_name	
 
 	def set_font_size(self, size):
 		self.font_size = Pt(size)
 
+	def set_font_color(self, color):
+		self.font_color = color
+		
 	def new(self, text):
 		slide = self.prs.slides.add_slide(self.blank_slide_layout)
 
@@ -59,12 +65,13 @@ class Slides:
 		p = tf.add_paragraph()
 		p.text = text
 		p.font.size = self.font_size
+		p.font.color.rgb = RGBColor.from_string(self.font_color);
 		p.alignment = PP_ALIGN.CENTER
 
 	def save(self):
 		self.prs.save(self.file_name)
 
-
+		
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
@@ -99,17 +106,21 @@ class Ppt(webapp2.RequestHandler):
         username = self.request.get('username',
                                           DEFAULT_GUESTBOOK_NAME)
 
-        slides = self.create_slides(self.request.get('content'))
-
+        fontsize = self.request.get('fontsize')
+        fontcolor = self.request.get('fontcolor')
+		
+        slides = self.create_slides(self.request.get('content'), int(fontsize), fontcolor[1:])
+        
         self.response.headers['Content-Type'] = 'application/octet-stream'
         self.response.headers['Content-Disposition'] = 'attachment; filename=slides.pptx'
         self.response.headers['Content-Length'] = len(slides);
         self.response.write(slides)
 
-    def create_slides(self, text):  
+    def create_slides(self, text, fontsize, fontcolor):  
         output = StringIO.StringIO()
         s1 = Slides(output)
-        #s1.set_font_size(20)
+        s1.set_font_size(fontsize)
+        s1.set_font_color(fontcolor)
 
         for line in text.split("\n"):
             if (line.strip()):
