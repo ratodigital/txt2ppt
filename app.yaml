@@ -9,7 +9,7 @@ handlers:
   static_dir: stylesheets
 
 - url: /.*
-  script: txt2ppt.application
+  script: index.application
 
 libraries:
 - name: webapp2
