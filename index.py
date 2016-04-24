@@ -56,19 +56,21 @@ class Ppt(webapp2.RequestHandler):
 
         fontsize = self.request.get('fontsize')
         fontcolor = self.request.get('fontcolor')
+        background_color = self.request.get('bgcolor')
         
-        slides = self.create_slides(self.request.get('content'), int(fontsize), fontcolor[1:])
+        slides = self.create_slides(self.request.get('content'), int(fontsize), fontcolor[1:], background_color[1:])
         
         self.response.headers['Content-Type'] = 'application/octet-stream'
         self.response.headers['Content-Disposition'] = 'attachment; filename=slides.pptx'
         self.response.headers['Content-Length'] = len(slides);
         self.response.write(slides)
 
-    def create_slides(self, text, fontsize, fontcolor):  
+    def create_slides(self, text, fontsize, fontcolor, background_color):  
         output = StringIO.StringIO()
         s1 = Slides(output)
         s1.set_font_size(fontsize)
         s1.set_font_color(fontcolor)
+        s1.set_background_color(background_color)
 
         for line in text.split("\n"):
             if (line.strip()):

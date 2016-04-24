@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import fix_path # has to be first.
 
 from pptx import Presentation
@@ -8,6 +9,7 @@ from pptx.enum.dml import MSO_THEME_COLOR
 from pptx.dml.color import RGBColor
 
 import lxml
+from lxml import etree
 
 import re
 from __builtin__ import True
@@ -18,6 +20,7 @@ class Slides:
     blank_slide_layout = prs.slide_layouts[6]
     font_size = Pt(30)
     font_color = "000000"
+    background_color = "FFFFFF"
 
     def __init__(self, file_name):
         self.prs = Presentation()
@@ -29,22 +32,28 @@ class Slides:
     def set_font_color(self, color):
         self.font_color = color
         
+    def set_background_color(self, color):
+        self.background_color = color
+        
     def new(self, text):
         slide = self.prs.slides.add_slide(self.blank_slide_layout)
-
+        
         left = Inches (0.5)
         top = Inches (2)
         width = Inches (9)
         height = Inches (3)
     
         txBox = slide.shapes.add_textbox(left, top, width, height)
+        #Set background color
+        self.slide_bg_color(slide, self.background_color)
+        
         tf = txBox.text_frame
         tf.word_wrap = True
         tf.vertical_anchor = MSO_VERTICAL_ANCHOR.MIDDLE
 
         p = tf.add_paragraph()
         p.font.size = self.font_size
-        p.font.color.rgb = RGBColor.from_string(self.font_color);
+        p.font.color.rgb = RGBColor.from_string(self.font_color)
         p.alignment = PP_ALIGN.CENTER
         
         for part in self.get_text_parts(text):
@@ -54,6 +63,21 @@ class Slides:
                 run.font.bold = True
             if part['type'] == 'italic':
                 run.font.italic = True
+        
+    def slide_bg_color(self, slide, bgcolor):
+        """
+        Ideal é colocar dentro da lib, no objeto slide. Mas preferi colocar aqui para não necessitar manter controle da versão da lib.
+        Dessa forma, a lib pptx continua a mesma
+        """
+        #<p:bg><p:bgPr><a:solidFill><a:srgbClr val="010101"/></a:solidFill><a:effectLst/></p:bgPr></p:bg>
+        el_bg = etree.Element('{http://schemas.openxmlformats.org/presentationml/2006/main}bg', nsmap={'p': 'http://schemas.openxmlformats.org/presentationml/2006/main'})
+        slide._element[0].insert(0, el_bg)
+        el_bg_pr = etree.Element('{http://schemas.openxmlformats.org/presentationml/2006/main}bgPr', nsmap={'p': 'http://schemas.openxmlformats.org/presentationml/2006/main'})
+        el_bg.append(el_bg_pr)
+        el_solid_fill = etree.Element('{http://schemas.openxmlformats.org/drawingml/2006/main}solidFill', nsmap={'a': 'http://schemas.openxmlformats.org/drawingml/2006/main'})
+        el_bg_pr.append(el_solid_fill)
+        color = etree.Element('{http://schemas.openxmlformats.org/drawingml/2006/main}srgbClr', val=bgcolor, nsmap={'a': 'http://schemas.openxmlformats.org/drawingml/2006/main'})
+        el_solid_fill.append(color)
         
     def get_text_parts(self, text):
         """
